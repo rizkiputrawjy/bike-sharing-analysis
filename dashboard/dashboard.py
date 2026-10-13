@@ -21,18 +21,7 @@ df = pd.read_csv(data_path)
 
 
 
-weather_mapping = {
-    1: "Cerah",
-    2: "Berawan",
-    3: "Hujan Ringan",
-    4: "Cuaca Buruk"
-}
-
-
-df["weather_label"] = (
-    df["weathersit"]
-    .map(weather_mapping)
-)
+df["weather_label"] = df["weather_label"]    
 
 
 df["workingday_label"] = (
