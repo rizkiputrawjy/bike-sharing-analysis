@@ -11,12 +11,18 @@ st.set_page_config(
 )
 
 
-file_path = os.path.join(
-    os.path.dirname(__file__),
-    "main_data.csv"
+base_path = os.path.dirname(__file__)
+
+
+day_df = pd.read_csv(
+    os.path.join(base_path, "day.csv")
 )
 
-df = pd.read_csv(file_path)
+
+hour_df = pd.read_csv(
+    os.path.join(base_path, "hour.csv")
+)
+
 
 
 weather_mapping = {
@@ -27,14 +33,19 @@ weather_mapping = {
 }
 
 
-df["weather_label"] = (
-    df["weathersit"]
+# DAY DATA (Q1)
+
+day_df["weather_label"] = (
+    day_df["weathersit"]
     .map(weather_mapping)
 )
 
 
-df["workingday_label"] = (
-    df["workingday"]
+
+# HOUR DATA (Q2)
+
+hour_df["workingday_label"] = (
+    hour_df["workingday"]
     .replace({
         1: "Hari Kerja",
         0: "Hari Libur"
@@ -43,40 +54,48 @@ df["workingday_label"] = (
 
 
 
-st.title("Bike Sharing Analysis Dashboard")
+st.title(
+    "Bike Sharing Analysis Dashboard"
+)
 
 
 st.write(
 """
-Dashboard ini menampilkan analisis penyewaan sepeda berdasarkan
-kondisi cuaca serta pola penggunaan berdasarkan waktu antara
-hari kerja dan hari libur.
+Dashboard ini menampilkan analisis pengaruh kondisi cuaca
+terhadap penyewaan sepeda serta pola penggunaan sepeda
+berdasarkan waktu pada hari kerja dan hari libur.
 """
 )
 
 
 
-st.sidebar.header("Filter")
+st.sidebar.header(
+    "Filter"
+)
 
 
 weather_filter = st.sidebar.multiselect(
     "Pilih Kondisi Cuaca",
-    options=df["weather_label"].unique(),
-    default=df["weather_label"].unique()
+    options=day_df["weather_label"].unique(),
+    default=day_df["weather_label"].unique()
 )
 
 
-workingday_filter = st.sidebar.multiselect(
+working_filter = st.sidebar.multiselect(
     "Pilih Jenis Hari",
-    options=df["workingday_label"].unique(),
-    default=df["workingday_label"].unique()
+    options=hour_df["workingday_label"].unique(),
+    default=hour_df["workingday_label"].unique()
 )
 
 
 
-filtered_df = df[
-    (df["weather_label"].isin(weather_filter)) &
-    (df["workingday_label"].isin(workingday_filter))
+filtered_day = day_df[
+    day_df["weather_label"].isin(weather_filter)
+]
+
+
+filtered_hour = hour_df[
+    hour_df["workingday_label"].isin(working_filter)
 ]
 
 
@@ -85,33 +104,34 @@ col1, col2, col3 = st.columns(3)
 
 
 with col1:
+
     st.metric(
         "Total Penyewaan",
-        f"{filtered_df['cnt'].sum():,.0f}"
+        f"{filtered_day['cnt'].sum():,.0f}"
     )
 
 
 with col2:
+
     st.metric(
-        "Rata-rata Penyewaan",
-        f"{filtered_df['cnt'].mean():,.2f}"
+        "Rata-rata Penyewaan Harian",
+        f"{filtered_day['cnt'].mean():,.2f}"
     )
 
 
 with col3:
 
     best_weather = (
-        filtered_df
+        filtered_day
         .groupby("weather_label")["cnt"]
         .mean()
         .idxmax()
     )
 
     st.metric(
-        "Cuaca dengan Penyewaan Tertinggi",
+        "Cuaca Terbaik",
         best_weather
     )
-
 
 
 st.header(
@@ -119,8 +139,9 @@ st.header(
 )
 
 
+
 weather_analysis = (
-    filtered_df
+    filtered_day
     .groupby("weather_label")["cnt"]
     .mean()
     .reset_index()
@@ -145,9 +166,11 @@ ax.set_title(
     "Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca"
 )
 
+
 ax.set_xlabel(
     "Kondisi Cuaca"
 )
+
 
 ax.set_ylabel(
     "Rata-rata Penyewaan"
@@ -162,9 +185,9 @@ st.write(
 """
 **Insight:**
 
-- Kondisi cuaca cerah memiliki rata-rata jumlah penyewaan tertinggi.
-- Kondisi cuaca kurang mendukung menunjukkan penurunan aktivitas penyewaan.
-- Informasi cuaca dapat digunakan untuk membantu pengelolaan armada.
+- Kondisi cuaca cerah memiliki rata-rata penyewaan tertinggi.
+- Kondisi cuaca kurang mendukung berkaitan dengan penurunan jumlah penyewaan.
+- Informasi cuaca dapat digunakan sebagai pertimbangan pengelolaan armada.
 """
 )
 
@@ -174,9 +197,8 @@ st.header(
 )
 
 
-
-hour_analysis = (
-    filtered_df
+hour_pattern = (
+    filtered_hour
     .groupby(
         [
             "hr",
@@ -195,7 +217,7 @@ fig, ax = plt.subplots(
 
 
 sns.lineplot(
-    data=hour_analysis,
+    data=hour_pattern,
     x="hr",
     y="cnt",
     hue="workingday_label",
@@ -208,9 +230,11 @@ ax.set_title(
     "Pola Rata-rata Penyewaan Berdasarkan Jam"
 )
 
+
 ax.set_xlabel(
     "Jam (0-23)"
 )
+
 
 ax.set_ylabel(
     "Rata-rata Penyewaan"
@@ -233,8 +257,8 @@ st.write(
 """
 **Insight:**
 
-- Hari kerja menunjukkan peningkatan penyewaan pada jam sibuk pagi dan sore.
+- Hari kerja menunjukkan dua peningkatan utama pada pagi dan sore hari.
 - Pola tersebut menunjukkan karakteristik penggunaan untuk aktivitas komuter.
-- Hari libur memiliki pola penggunaan lebih stabil dengan peningkatan pada periode siang hari.
+- Hari libur memiliki peningkatan penggunaan terutama pada periode siang hari.
 """
 )
