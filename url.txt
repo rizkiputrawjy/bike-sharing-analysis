@@ -1,2 +1,1 @@
-Local URL: http://localhost:8501
-Network URL: http://192.168.10.236:8501
+https://bike-sharing-analysis-kbga76itarickw7rn4k8lt.streamlit.app/
