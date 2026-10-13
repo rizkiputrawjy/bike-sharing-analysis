@@ -16,9 +16,9 @@ pip install -r requirements.txt
 
 ```bash
 
-mkdir proyek\\\_analisis\\\_data
+mkdir proyek_analisis_data
 
-cd proyek\\\_analisis\\\_data
+cd proyek_analisis_data
 
 pip install -r requirements.txt
 
