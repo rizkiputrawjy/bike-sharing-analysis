@@ -1,10 +1,6 @@
-\# Bike Sharing Analysis Dashboard
+# Bike Sharing Analysis Dashboard
 
-
-
-\## Setup Environment - Anaconda
-
-
+## Setup Environment - Anaconda
 
 ```bash
 
@@ -16,11 +12,7 @@ pip install -r requirements.txt
 
 ```
 
-
-
-\## Setup Environment - Shell/Terminal
-
-
+## Setup Environment - Shell/Terminal
 
 ```bash
 
@@ -32,19 +24,12 @@ pip install -r requirements.txt
 
 ```
 
-
-
-\## Run Streamlit App
-
-
+## Run Streamlit App
 
 Jalankan aplikasi dashboard dengan perintah:
 
-
-
 ```bash
 
-streamlit run dashboard.py
+streamlit run dashboard/dashboard.py
 
 ```
-
