@@ -2,8 +2,11 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
-df = pd.read_csv("day.csv")
+file_path = os.path.join(os.path.dirname(__file__), "day.csv")
+
+df = pd.read_csv(file_path)
 
 st.title("Bike Sharing Analysis Dashboard")
 
