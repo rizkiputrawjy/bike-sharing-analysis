@@ -3,21 +3,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
-# Load data
 df = pd.read_csv("day.csv")
 
-
-# Judul dashboard
 st.title("Bike Sharing Analysis Dashboard")
 
-
-# Menampilkan data
 st.subheader("Dataset Preview")
 st.dataframe(df.head())
 
-
-# Grafik cuaca
 st.subheader("Jumlah Penyewaan Berdasarkan Cuaca")
 
 fig, ax = plt.subplots(figsize=(8,5))
@@ -34,8 +26,6 @@ ax.set_ylabel("Jumlah Penyewaan")
 
 st.pyplot(fig)
 
-
-# Grafik working day
 st.subheader("Hari Kerja vs Hari Libur")
 
 workingday_df = df.groupby("workingday")["cnt"].mean().reset_index()
